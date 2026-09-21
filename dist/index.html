@@ -36,12 +36,11 @@
       .inside-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; } .inside-brand { color: #86e8ff; font-weight: 700; letter-spacing: .12em; } .inside-brand span { display: block; font-size: .7rem; font-weight: 400; letter-spacing: .15em; margin-top: .3rem; } .thirteen { font-size: clamp(3rem, 8vw, 5.7rem); line-height: .75; font-weight: 900; color: #87e9ff; text-shadow: 0 0 24px rgba(74,204,255,.8); }
       .headline { align-self: center; text-align: center; } .headline p { margin: 0 0 .8rem; font-size: clamp(1.2rem, 3.2vw, 1.8rem); letter-spacing: .18em; margin-left: .18em; color: #ffe5a1; } .headline h1 { margin: 0; font-size: clamp(2rem, 6.4vw, 4.2rem); line-height: 1.16; letter-spacing: .06em; } .headline h1 span { display: block; color: #5fdbff; font-size: .9em; margin-top: .18em; } .headline .event { margin: 1.5rem auto 0; max-width: 35rem; line-height: 1.65; font-size: clamp(1rem, 2.7vw, 1.35rem); }
       .details { display: grid; gap: .72rem; margin: .7rem 0; } .detail { padding: .85rem 1rem; border-left: 3px solid #62ddff; border-radius: 4px; background: rgba(4,16,59,.62); box-shadow: inset 0 0 0 1px rgba(118,222,255,.18); line-height: 1.55; } .detail strong { color: #83e4ff; }
-      .agenda { display: grid; grid-template-columns: 1fr 1fr; gap: .7rem; font-size: .95rem; } .agenda div { padding: .75rem; border: 1px solid rgba(122,221,255,.26); background: rgba(9,29,80,.58); border-radius: 5px; } .agenda b { color: #ffe4a0; }
       .guest { margin-top: 1rem; padding: .95rem; text-align: center; border-top: 1px solid rgba(255,224,150,.5); border-bottom: 1px solid rgba(255,224,150,.35); color: #f8fbff; line-height: 1.7; } .guest b { display: block; color: #ffe29a; letter-spacing: .12em; margin-bottom: .25rem; }
       .share { align-self: center; appearance: none; border: 1px solid #ffe3a1; background: linear-gradient(110deg, #d6952b, #fff0b7, #c67c17); color: #34200a; padding: .8rem 1.5rem; border-radius: 999px; font-weight: 800; cursor: pointer; transition: transform .2s ease, filter .2s ease; } .share:hover, .share:focus-visible { transform: translateY(-2px); filter: brightness(1.08); outline: 2px solid #9eeaff; outline-offset: 3px; }
       .note { min-height: 1.3em; text-align: center; color: #9eeaff; font-size: .88rem; margin: .2rem 0 0; }
       .is-open .closed-card { opacity: 0; transform: rotateY(-88deg) translateX(-12%); pointer-events: none; } .is-open .inside { opacity: 1; transform: scale(1); pointer-events: auto; }
-      @media (max-width: 540px) { .stage { padding: 1rem .55rem; } .invitation, .closed-card, .inside { min-height: 690px; } .closed-card { min-height: calc(100vh - 2rem); } .inside { min-height: calc(100vh - 2rem); } .agenda { grid-template-columns: 1fr; } .inside-header { align-items: center; } .event { padding: 0 .25rem; } }
+      @media (max-width: 540px) { .stage { padding: 1rem .55rem; } .invitation, .closed-card, .inside { min-height: 690px; } .closed-card { min-height: calc(100vh - 2rem); } .inside { min-height: calc(100vh - 2rem); } .inside-header { align-items: center; } .event { padding: 0 .25rem; } }
       @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition-duration: .01ms !important; } }
     </style>
   </head>
@@ -59,7 +58,6 @@
             <p>诚 挚 邀 请</p><h1>智启十三载<span>AI焕新未来</span></h1>
             <div class="event">浪曦云团13周年庆典暨人工智能产业创新峰会</div>
             <div class="details"><div class="detail"><strong>⏰ 时间：</strong>10月1日 13:30</div><div class="detail"><strong>📍 地点：</strong>济南西城泉盈酒店（长清大学城）金色大厅</div></div>
-            <div class="agenda"><div><b>10月2日</b>｜圆桌会议、田园休憩</div><div><b>10月3–5日</b>｜智能体项目落地</div></div>
             <div class="guest"><b>重磅嘉宾分享</b>大数据协会 · 浪潮 · AI独角兽公司 · 字节跳动 · 携程旅行</div>
           </div>
           <footer><button class="share" id="shareInvitation" type="button">分享邀请函</button><p class="note" id="shareNote" role="status"></p></footer>
