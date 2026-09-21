@@ -1,0 +1,6 @@
+# 元数据 / IDE 目录
+.workbuddy/
+.openai/
+
+# 构建产物 / 压缩包
+*.zip

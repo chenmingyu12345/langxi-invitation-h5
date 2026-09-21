@@ -1,0 +1,41 @@
+schemaVersion: 2.2.0
+metadata:
+  name: langxi-invitation-h5
+  version: 1.0.0
+  displayName: 浪曦云团13周年电子邀请函
+  description: 浪曦云团13周年庆典暨人工智能产业创新峰会电子邀请函（纯静态站点）
+  projectType: static
+  language: HTML
+  tags:
+    - html
+    - static
+components:
+  - name: dev
+    container:
+      image: python:3.11-slim
+      mountSources: true
+      env:
+        - name: PORT
+          value: "8000"
+      memoryLimit: 512Mi
+      command:
+        - tail
+        - -f
+        - /dev/null
+      endpoints:
+        - name: web
+          targetPort: 8000
+          path: /index.html
+          exposure: public
+          secure: false
+commands:
+  - id: serve
+    exec:
+      label: Start static server
+      description: 在 dist 目录启动静态文件服务器并暴露预览端口
+      component: dev
+      workingDir: ${PROJECT_SOURCE}/dist
+      command: python -m http.server ${PORT} --bind 0.0.0.0
+      group:
+        kind: run
+        isDefault: true

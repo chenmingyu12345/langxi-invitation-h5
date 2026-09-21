@@ -2,7 +2,7 @@
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#061b52" />
     <meta name="description" content="浪曦云团13周年庆典暨人工智能产业创新峰会电子邀请函" />
     <title>浪曦云团13周年电子邀请函</title>
@@ -12,56 +12,101 @@
       * { box-sizing: border-box; }
       body { margin: 0; min-width: 320px; min-height: 100vh; overflow-x: hidden; color: #f6fbff; background: radial-gradient(circle at 50% 0%, #124d97 0%, #071c56 42%, #02091e 100%); }
       button { font: inherit; }
-      .stage { min-height: 100vh; display: grid; place-items: center; padding: 2rem 1rem; position: relative; isolation: isolate; }
+      .stage { min-height: 100vh; display: grid; place-items: center; padding: 1.5rem 1rem; position: relative; isolation: isolate; }
       .stage::before, .stage::after { content: ""; position: fixed; pointer-events: none; inset: 0; z-index: -1; }
       .stage::before { opacity: .35; background-image: linear-gradient(90deg, transparent 49.8%, rgba(98,213,255,.26) 50%, transparent 50.2%), linear-gradient(0deg, transparent 49.8%, rgba(98,213,255,.18) 50%, transparent 50.2%); background-size: 130px 130px; mask-image: linear-gradient(to bottom, #000, transparent 75%); }
       .stage::after { background: radial-gradient(ellipse at 50% 95%, rgba(28,164,255,.32), transparent 47%); }
-      .invitation { width: min(92vw, 710px); min-height: min(82vh, 900px); perspective: 1900px; position: relative; }
-      .closed-card { width: 100%; min-height: 690px; border: 1px solid rgba(112,218,255,.6); border-radius: 10px; background: linear-gradient(130deg, rgba(16,76,156,.96), rgba(3,20,76,.98) 48%, rgba(4,15,57,.98)); box-shadow: 0 0 0 1px rgba(5,11,46,.8), 0 28px 80px rgba(0,0,0,.55), inset 0 0 80px rgba(45,163,255,.16); position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; cursor: pointer; transition: opacity .55s ease, transform .85s cubic-bezier(.2,.9,.2,1); }
-      .closed-card::before { content: ""; position: absolute; inset: 18px; border: 1px solid rgba(87,208,255,.32); border-radius: 4px; }
-      .closed-card::after { content: ""; position: absolute; inset: 0; opacity: .65; background: radial-gradient(circle at 18% 19%, rgba(91,214,255,.48), transparent 20%), radial-gradient(circle at 82% 77%, rgba(12,72,175,.55), transparent 27%), repeating-linear-gradient(112deg, transparent 0 7px, rgba(255,255,255,.025) 8px 9px); }
-      .brand, .cover-title, .open-hint { position: relative; z-index: 1; text-align: center; }
-      .brand-mark { width: 74px; height: 43px; margin: 0 auto 10px; position: relative; filter: drop-shadow(0 0 10px rgba(82,221,255,.6)); }
-      .brand-mark span { position: absolute; border: 3px solid #62d9ff; border-radius: 50%; }
-      .brand-mark span:nth-child(1){ width: 30px; height: 30px; left: 5px; top: 9px; } .brand-mark span:nth-child(2){ width: 38px; height: 38px; left: 19px; top: 0; } .brand-mark span:nth-child(3){ width: 30px; height: 30px; right: 5px; top: 9px; }
-      .brand-cn { font-size: 1.4rem; letter-spacing: .22em; color: #7ee4ff; margin-left: .22em; } .brand-en { font-size: .68rem; letter-spacing: .19em; color: #b8e9ff; margin-top: 3px; }
-      .cover-title { margin-top: 10vh; letter-spacing: .22em; margin-left: .22em; font-size: clamp(3.2rem, 10vw, 6.4rem); line-height: 1; font-weight: 900; color: #fff9c8; text-shadow: 0 0 18px rgba(255,232,118,.5); }
-      .cover-title small { display: block; margin-top: 1.5rem; font-size: clamp(1rem, 3vw, 1.45rem); font-style: italic; letter-spacing: .12em; color: #e9f9ff; }
-      .open-hint { margin-top: 13vh; border: 1px solid rgba(255,237,161,.78); border-radius: 999px; padding: .7rem 1.45rem; color: #fff2bd; background: rgba(255,255,255,.06); letter-spacing: .12em; animation: pulse 2.2s ease-in-out infinite; }
-      .open-hint::before { content: "✦"; margin-right: .55rem; }
+
+      /* ══ 一张纸对折：闭合时只剩下半（封面），展开后是完整一张 ══
+         纸面高 --h，折痕在 50%。上半 .flap 绕折痕(bottom center)旋转：
+         -182° = 折下来盖住下半，0° = 摊平。用负角度让上盖始终在纸面前方，
+         不会被下半遮挡（正角度会穿到纸面背后而被挡住）。 */
+      .invitation { width: min(92vw, 660px); position: relative; --h: min(86vh, 880px); --persp: 1600px; }
+      .sheet { position: relative; height: var(--h); transform: translateY(calc(var(--h) / -4)); transition: transform 1.15s cubic-bezier(.5,.05,.22,1); }
+      .is-open .sheet { transform: translateY(0); }
+      .flap { position: absolute; left: 0; right: 0; top: 0; height: 50%; z-index: 2; transform-origin: bottom center; transform-style: preserve-3d; transform: perspective(var(--persp)) rotateX(-182deg); will-change: transform; transition: transform 1.15s cubic-bezier(.5,.05,.22,1); }
+      .is-open .flap { transform: perspective(var(--persp)) rotateX(0deg); }
+      .flap-face { position: absolute; inset: 0; overflow: hidden; backface-visibility: hidden; }
+      .flap-back { transform: rotateX(180deg); }
+
+      /* 内页两半：共用同一条竖向渐变，接缝处颜色对齐，展开后像一张整卡 */
+      .panel-top, .panel-base { display: flex; flex-direction: column; justify-content: center; padding: clamp(.9rem, 2.8vh, 1.9rem) clamp(1rem, 4vw, 2.4rem); border: 1px solid rgba(112,218,255,.5); }
+      .panel-top { align-items: stretch; background: linear-gradient(180deg, #0d3d86, #071f52); border-bottom: 0; border-radius: 12px 12px 0 0; }
+      .panel-base { background: linear-gradient(180deg, #071f52, #0b2e6e); border-top: 0; border-radius: 0 0 12px 12px; position: absolute; left: 0; right: 0; bottom: 0; height: 50%; z-index: 1; overflow: hidden; }
+      .panel-top::before { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 84% 14%, rgba(82,211,255,.3), transparent 34%), linear-gradient(90deg, transparent 0 49.8%, rgba(100,220,255,.14) 50%, transparent 50.2%); background-size: auto, 72px 72px; opacity: .6; pointer-events: none; }
+      /* 折痕：两半各自贴缝的一侧压一道内阴影，接缝读作「对折线」 */
+      .panel-top::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 22%; pointer-events: none; background: linear-gradient(0deg, rgba(0,0,0,.5), transparent); }
+      .panel-base::after { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 20%; pointer-events: none; background: linear-gradient(180deg, rgba(0,0,0,.45), transparent); }
+      .panel-top > *, .panel-base > * { position: relative; z-index: 1; }
+
+      .inside-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+      .logo-img { display: block; width: 100%; height: auto; filter: drop-shadow(0 0 5px rgba(120,220,255,.3)); }
+      .inside-header .logo-img { width: clamp(52px, 12.5vw, 71px); align-self: center; flex: none; }
+      .thirteen { font-size: clamp(2rem, 6.4vh, 4.6rem); line-height: .76; font-weight: 900; color: #87e9ff; text-shadow: 0 0 24px rgba(74,204,255,.8); }
+      .headline { text-align: center; margin-top: clamp(.6rem, 2vh, 1.4rem); }
+      .headline p { margin: 0 0 clamp(.4rem, 1.4vh, .9rem); font-size: clamp(.95rem, 2.5vh, 1.6rem); letter-spacing: .18em; margin-left: .18em; color: #ffe5a1; }
+      .headline h1 { margin: 0; font-size: clamp(1.5rem, 4.5vh, 3.5rem); line-height: 1.16; letter-spacing: .06em; }
+      .headline h1 span { display: block; color: #5fdbff; font-size: .9em; margin-top: .18em; }
+      .headline .event { margin: clamp(.7rem, 2vh, 1.5rem) auto 0; max-width: 32rem; line-height: 1.6; font-size: clamp(.85rem, 2.1vh, 1.25rem); }
+
+      .details { display: grid; gap: clamp(.4rem, 1.3vh, .75rem); }
+      .detail { padding: clamp(.45rem, 1.6vh, .85rem) clamp(.65rem, 2.4vw, 1rem); border-left: 3px solid #62ddff; border-radius: 4px; background: rgba(4,16,59,.62); box-shadow: inset 0 0 0 1px rgba(118,222,255,.18); line-height: 1.5; font-size: clamp(.82rem, 2vh, 1.15rem); }
+      .detail strong { color: #83e4ff; }
+      .guest { margin-top: clamp(.6rem, 1.8vh, 1.1rem); padding: clamp(.5rem, 1.6vh, .9rem) .5rem; text-align: center; border-top: 1px solid rgba(255,224,150,.5); border-bottom: 1px solid rgba(255,224,150,.35); line-height: 1.65; font-size: clamp(.78rem, 1.9vh, 1.1rem); }
+      .guest b { display: block; color: #ffe29a; letter-spacing: .12em; margin-bottom: .2rem; }
+      .panel-base footer { margin-top: clamp(.7rem, 2vh, 1.2rem); text-align: center; }
+      .share { appearance: none; border: 1px solid #ffe3a1; background: linear-gradient(110deg, #d6952b, #fff0b7, #c67c17); color: #34200a; padding: clamp(.5rem, 1.6vh, .8rem) clamp(1.1rem, 4vw, 1.6rem); border-radius: 999px; font-weight: 800; font-size: clamp(.82rem, 2vh, 1.05rem); cursor: pointer; transition: transform .2s ease, filter .2s ease; }
+      .share:hover, .share:focus-visible { transform: translateY(-2px); filter: brightness(1.08); outline: 2px solid #9eeaff; outline-offset: 3px; }
+      .note { min-height: 1.2em; color: #9eeaff; font-size: clamp(.72rem, 1.7vh, .88rem); margin: .4rem 0 0; }
+
+      /* ── 封面（折起来时朝外的那一面，也就是上盖的背面）── */
+      .cover { display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: clamp(1.2rem, 4vh, 2.4rem) clamp(.9rem, 3.5vw, 1.6rem); border: 1px solid rgba(112,218,255,.6); border-radius: 12px; background: linear-gradient(160deg, rgba(16,76,156,.97), rgba(3,20,76,.99) 52%, rgba(4,15,57,.99)); box-shadow: inset 0 0 80px rgba(45,163,255,.18), inset 0 14px 20px -16px rgba(0,0,0,.95); }
+      .cover::before { content: ""; position: absolute; inset: 13px; border: 1px solid rgba(87,208,255,.3); border-radius: 6px; pointer-events: none; }
+      .cover::after { content: ""; position: absolute; inset: 0; border-radius: 12px; opacity: .6; pointer-events: none; background: radial-gradient(circle at 18% 15%, rgba(91,214,255,.5), transparent 26%), radial-gradient(circle at 84% 84%, rgba(12,72,175,.6), transparent 34%), repeating-linear-gradient(112deg, transparent 0 7px, rgba(255,255,255,.025) 8px 9px); }
+      .cover > * { position: relative; z-index: 1; }
+      .brand { text-align: center; }
+      .brand .logo-img { width: min(102px, 30vw); margin: 0 auto; }
+      .cover-title { text-align: center; letter-spacing: .22em; margin-left: .22em; font-size: clamp(2.4rem, 8.5vh, 4.6rem); line-height: 1; font-weight: 900; color: #fff9c8; text-shadow: 0 0 18px rgba(255,232,118,.5); }
+      .cover-title small { display: block; margin-top: clamp(.6rem, 2vh, 1.2rem); font-size: clamp(.75rem, 2vh, 1.15rem); font-style: italic; letter-spacing: .12em; color: #e9f9ff; }
+      .open-hint { border: 1px solid rgba(255,237,161,.78); border-radius: 999px; padding: clamp(.5rem, 1.5vh, .7rem) clamp(1rem, 4vw, 1.45rem); color: #fff2bd; background: rgba(255,255,255,.06); letter-spacing: .12em; font-size: clamp(.75rem, 1.9vh, .95rem); animation: pulse 2.2s ease-in-out infinite; }
+      .open-hint::before { content: "✦"; margin-right: .5rem; }
       @keyframes pulse { 50% { box-shadow: 0 0 0 10px rgba(255,232,118,0), 0 0 22px rgba(255,232,118,.36); transform: translateY(-3px); } }
-      .inside { min-height: 690px; opacity: 0; transform: scale(.95); pointer-events: none; transition: opacity .55s .18s ease, transform .75s .1s cubic-bezier(.2,.9,.2,1); display: grid; grid-template-rows: auto 1fr auto; gap: 1.2rem; padding: clamp(1.4rem, 4vw, 2.8rem); border: 1px solid rgba(112,218,255,.6); border-radius: 10px; background: linear-gradient(145deg, #0a3477, #06194f 58%, #0b2664); box-shadow: 0 28px 80px rgba(0,0,0,.55), inset 0 0 80px rgba(48,172,255,.12); position: relative; overflow: hidden; }
-      .inside::before { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 86% 12%, rgba(82,211,255,.25), transparent 23%), linear-gradient(90deg, transparent 0 49.8%, rgba(100,220,255,.16) 50%, transparent 50.2%); background-size: auto, 72px 72px; opacity: .55; pointer-events: none; }
-      .inside > * { position: relative; z-index: 1; }
-      .inside-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; } .inside-brand { color: #86e8ff; font-weight: 700; letter-spacing: .12em; } .inside-brand span { display: block; font-size: .7rem; font-weight: 400; letter-spacing: .15em; margin-top: .3rem; } .thirteen { font-size: clamp(3rem, 8vw, 5.7rem); line-height: .75; font-weight: 900; color: #87e9ff; text-shadow: 0 0 24px rgba(74,204,255,.8); }
-      .headline { align-self: center; text-align: center; } .headline p { margin: 0 0 .8rem; font-size: clamp(1.2rem, 3.2vw, 1.8rem); letter-spacing: .18em; margin-left: .18em; color: #ffe5a1; } .headline h1 { margin: 0; font-size: clamp(2rem, 6.4vw, 4.2rem); line-height: 1.16; letter-spacing: .06em; } .headline h1 span { display: block; color: #5fdbff; font-size: .9em; margin-top: .18em; } .headline .event { margin: 1.5rem auto 0; max-width: 35rem; line-height: 1.65; font-size: clamp(1rem, 2.7vw, 1.35rem); }
-      .details { display: grid; gap: .72rem; margin: .7rem 0; } .detail { padding: .85rem 1rem; border-left: 3px solid #62ddff; border-radius: 4px; background: rgba(4,16,59,.62); box-shadow: inset 0 0 0 1px rgba(118,222,255,.18); line-height: 1.55; } .detail strong { color: #83e4ff; }
-      .guest { margin-top: 1rem; padding: .95rem; text-align: center; border-top: 1px solid rgba(255,224,150,.5); border-bottom: 1px solid rgba(255,224,150,.35); color: #f8fbff; line-height: 1.7; } .guest b { display: block; color: #ffe29a; letter-spacing: .12em; margin-bottom: .25rem; }
-      .share { align-self: center; appearance: none; border: 1px solid #ffe3a1; background: linear-gradient(110deg, #d6952b, #fff0b7, #c67c17); color: #34200a; padding: .8rem 1.5rem; border-radius: 999px; font-weight: 800; cursor: pointer; transition: transform .2s ease, filter .2s ease; } .share:hover, .share:focus-visible { transform: translateY(-2px); filter: brightness(1.08); outline: 2px solid #9eeaff; outline-offset: 3px; }
-      .note { min-height: 1.3em; text-align: center; color: #9eeaff; font-size: .88rem; margin: .2rem 0 0; }
-      .is-open .closed-card { opacity: 0; transform: rotateY(-88deg) translateX(-12%); pointer-events: none; } .is-open .inside { opacity: 1; transform: scale(1); pointer-events: auto; }
-      @media (max-width: 540px) { .stage { padding: 1rem .55rem; } .invitation, .closed-card, .inside { min-height: 690px; } .closed-card { min-height: calc(100vh - 2rem); } .inside { min-height: calc(100vh - 2rem); } .inside-header { align-items: center; } .event { padding: 0 .25rem; } }
+
+      /* 点击热区：闭合时正好覆盖折起来的封面，展开后放行（避免挡住分享按钮） */
+      .fold-hit { position: absolute; left: 0; right: 0; bottom: 0; height: 50%; z-index: 3; padding: 0; border: 0; background: none; color: inherit; cursor: pointer; }
+      .is-open .fold-hit { pointer-events: none; }
+
       @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition-duration: .01ms !important; } }
     </style>
   </head>
   <body>
     <main class="stage">
       <section class="invitation" id="invitation" aria-label="浪曦云团13周年电子邀请函">
-        <button class="closed-card" id="openInvitation" type="button" aria-label="打开电子邀请函">
-          <div class="brand"><div class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></div><div class="brand-cn">浪曦云团</div><div class="brand-en">LANGXIYUNTUAN</div></div>
-          <div class="cover-title">邀请函<small>INVITATION</small></div>
-          <div class="open-hint">点击开启邀请函</div>
-        </button>
-        <article class="inside" aria-live="polite">
-          <header class="inside-header"><div class="inside-brand">浪曦云团<span>LANGXIYUNTUAN</span></div><div class="thirteen">13</div></header>
-          <div class="headline">
-            <p>诚 挚 邀 请</p><h1>智启十三载<span>AI焕新未来</span></h1>
-            <div class="event">浪曦云团13周年庆典暨人工智能产业创新峰会</div>
-            <div class="details"><div class="detail"><strong>⏰ 时间：</strong>10月1日 13:30</div><div class="detail"><strong>📍 地点：</strong>济南西城泉盈酒店（长清大学城）金色大厅</div></div>
+        <div class="sheet">
+          <article class="panel panel-base" aria-live="polite">
+            <div class="details">
+              <div class="detail"><strong>⏰ 时间：</strong>10月1日 13:30</div>
+              <div class="detail"><strong>📍 地点：</strong>济南西城泉盈酒店（长清大学城）金色大厅</div>
+            </div>
             <div class="guest"><b>重磅嘉宾分享</b>大数据协会 · 浪潮 · AI独角兽公司 · 字节跳动 · 携程旅行</div>
+            <footer><button class="share" id="shareInvitation" type="button">分享邀请函</button><p class="note" id="shareNote" role="status"></p></footer>
+          </article>
+          <div class="flap" aria-hidden="false">
+            <div class="flap-face panel panel-top">
+              <header class="inside-header"><img class="logo-img" src="logo.png" alt="浪曦云团"><div class="thirteen">13</div></header>
+              <div class="headline">
+                <p>诚 挚 邀 请</p><h1>智启十三载<span>AI焕新未来</span></h1>
+                <div class="event">浪曦云团13周年庆典暨人工智能产业创新峰会</div>
+              </div>
+            </div>
+            <div class="flap-face flap-back cover">
+              <div class="brand"><img class="logo-img" src="logo.png" alt="浪曦云团"></div>
+              <div class="cover-title">邀请函<small>INVITATION</small></div>
+              <div class="open-hint">点击展开邀请函</div>
+            </div>
           </div>
-          <footer><button class="share" id="shareInvitation" type="button">分享邀请函</button><p class="note" id="shareNote" role="status"></p></footer>
-        </article>
+          <button class="fold-hit" id="openInvitation" type="button" aria-label="展开电子邀请函"></button>
+        </div>
       </section>
     </main>
     <script>
